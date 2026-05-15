@@ -1,0 +1,100 @@
+<%
+// syzoj-cpoauth-plugin: 可复用的 CP OAuth 资料卡片
+// 用法:在 user.ejs 个人资料区任意位置插入:
+//   <% include _cpoauth_profile_card %>
+//
+// 前置条件:user.js 已经把 cpoauth_binding 注入到 show_user 上下文
+// (见 integration/user_module_integration.md)
+%>
+
+<% if (show_user.cpoauth_binding) {
+     var binding = show_user.cpoauth_binding;
+     var cps = binding.cp_summary_parsed || [];
+%>
+<div class="row">
+  <div class="column">
+    <h4 class="ui top attached block header" style="background: linear-gradient(90deg, #5c2db8, #7c4dd8); color: white;">
+      <i class="trophy icon"></i> CP OAuth 验证身份
+    </h4>
+    <div class="ui bottom attached segment">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+        <% if (binding.avatar_url) { %>
+          <img src="<%= binding.avatar_url %>" alt="" style="width: 32px; height: 32px; border-radius: 50%;">
+        <% } %>
+        <div>
+          <b><%= binding.display_name || binding.cpoauth_username || '' %></b>
+          <% if (binding.cpoauth_username) { %><small style="color: #888;">@<%= binding.cpoauth_username %></small><% } %>
+        </div>
+      </div>
+      <%
+      var accounts = Array.isArray(cps) ? cps : [];
+      var styleMap = {
+        luogu:      { name: '洛谷',     color: '#e8770c', urlPrefix: 'https://www.luogu.com.cn/user/' },
+        codeforces: { name: 'Codeforces', color: '#1f8acb', urlPrefix: 'https://codeforces.com/profile/' },
+        atcoder:    { name: 'AtCoder',  color: '#222',    urlPrefix: 'https://atcoder.jp/users/' },
+        github:     { name: 'GitHub',   color: '#24292e', urlPrefix: 'https://github.com/' },
+        google:     { name: 'Google',   color: '#4285f4', urlPrefix: '#' }
+      };
+      accounts.forEach(function(acc) {
+        var s = styleMap[acc.platform] || { name: acc.platform, color: '#888', urlPrefix: '#' };
+        var displayValue = acc.platformUsername || acc.platformUid;
+        var urlValue = (acc.platform === 'codeforces' || acc.platform === 'atcoder' || acc.platform === 'github')
+                        ? acc.platformUsername : acc.platformUid;
+      %>
+        <div style="margin: 4px 0;">
+          <span style="background: <%= s.color %>; color: white; padding: 2px 8px; border-radius: 3px; font-size: 0.85em;"><%= s.name %></span>
+          <% if (s.urlPrefix && s.urlPrefix !== '#') { %>
+            <a href="<%= s.urlPrefix %><%= urlValue %>" target="_blank" rel="noopener"><%= displayValue %></a>
+          <% } else { %>
+            <%= displayValue %>
+          <% } %>
+        </div>
+      <% }); %>
+      <% if (binding.last_synced_at) { %>
+        <div style="margin-top: 8px; color: #888; font-size: 0.85em;">最近同步:<%= syzoj.utils.formatDate(binding.last_synced_at) %></div>
+      <% } %>
+      <% if (res.locals.user && res.locals.user.id === show_user.id) { %>
+        <div style="margin-top: 8px;">
+          <button class="ui mini button" onclick="cpoauthSync()">手动刷新</button>
+          <button class="ui mini red button" onclick="cpoauthUnlink()">解绑</button>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<% } else if (res.locals.user && res.locals.user.id === show_user.id && syzoj.cpoauth_enabled) { %>
+<div class="row">
+  <div class="column">
+    <h4 class="ui top attached block header">CP OAuth</h4>
+    <div class="ui bottom attached segment">
+      <p style="margin: 0 0 8px 0; color: #666;">尚未绑定 CP OAuth。绑定后展示你的洛谷 / CF / AtCoder 身份。</p>
+      <a href="/auth/cpoauth/login?mode=link" class="ui mini purple button" style="background: #5c2db8;">
+        <i class="trophy icon"></i> 绑定 CP OAuth
+      </a>
+    </div>
+  </div>
+</div>
+<% } %>
+
+<% if (show_user.cpoauth_binding && res.locals.user && res.locals.user.id === show_user.id) { %>
+<script>
+function cpoauthSync() {
+  if (!confirm('确定手动从 CP OAuth 同步最新数据?')) return;
+  fetch('/auth/cpoauth/sync', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      if (data.status === 'ok') { alert('同步成功!'); location.reload(); }
+      else { alert('失败:' + (data.error || '未知错误')); }
+    });
+}
+function cpoauthUnlink() {
+  if (!confirm('确定解绑 CP OAuth? 解绑后将无法用 CP OAuth 登录本账号(除非重新绑定)。')) return;
+  fetch('/auth/cpoauth/unlink', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      if (data.status === 'ok') { alert('解绑成功'); location.reload(); }
+      else { alert('失败:' + (data.error || '未知错误')); }
+    });
+}
+</script>
+<% } %>

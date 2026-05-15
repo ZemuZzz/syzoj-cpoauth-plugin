@@ -1,0 +1,31 @@
+# syzoj-cpoauth-plugin docker-compose 挂载片段
+# ============================================================
+# 把下面的 volumes 段合并到你的 docker-compose.yml 的 web 服务里。
+# 假设插件代码克隆到了 /etc/docker/compose/MyOJ/syzoj-cpoauth-plugin/
+# 你需要根据自己实际路径修改。
+# ============================================================
+
+services:
+  web:
+    # ... 其他原有配置 ...
+    volumes:
+      # 后端模块
+      - ./syzoj-cpoauth-plugin/plugin/modules/cpoauth.js:/app/modules/cpoauth.js:ro
+
+      # EJS views (主选择页 + 可复用 partials)
+      - ./syzoj-cpoauth-plugin/plugin/views/cpoauth_choose.ejs:/app/views/cpoauth_choose.ejs:ro
+      - ./syzoj-cpoauth-plugin/plugin/views/_cpoauth_login_button.ejs:/app/views/_cpoauth_login_button.ejs:ro
+      - ./syzoj-cpoauth-plugin/plugin/views/_cpoauth_profile_card.ejs:/app/views/_cpoauth_profile_card.ejs:ro
+
+      # 改动后的 login.ejs / sign_up.ejs / user.ejs / user.js (按 integration/*.md 修改后挂载)
+      - ./views/login.ejs:/app/views/login.ejs:ro
+      - ./views/sign_up.ejs:/app/views/sign_up.ejs:ro
+      - ./views/user.ejs:/app/views/user.ejs:ro
+      - ./modules/user.js:/app/modules/user.js:ro
+
+    environment:
+      SYZOJ_WEB_CPOAUTH_CLIENT_ID: ${SYZOJ_WEB_CPOAUTH_CLIENT_ID}
+      SYZOJ_WEB_CPOAUTH_CLIENT_SECRET: ${SYZOJ_WEB_CPOAUTH_CLIENT_SECRET}
+      SYZOJ_WEB_CPOAUTH_BASE_URL: ${SYZOJ_WEB_CPOAUTH_BASE_URL}
+      SYZOJ_WEB_CPOAUTH_REDIRECT_URI: ${SYZOJ_WEB_CPOAUTH_REDIRECT_URI}
+      SYZOJ_WEB_CPOAUTH_SCOPE: ${SYZOJ_WEB_CPOAUTH_SCOPE}

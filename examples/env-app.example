@@ -1,0 +1,24 @@
+# syzoj-cpoauth-plugin 环境变量配置示例
+# ============================================================
+# 把这些变量加到你的 SYZOJ 启动环境(env-app 文件或 docker-compose
+# environment 段或 systemd EnvironmentFile)。
+#
+# SYZOJ 启动时会自动把 SYZOJ_WEB_xxx 转成 web.json 里的 xxx 配置
+# 或通过 process.env 直接读取。
+# ============================================================
+
+# 你在 cpoauth.com 注册的 client_id
+SYZOJ_WEB_CPOAUTH_CLIENT_ID=00000000-0000-0000-0000-000000000000
+
+# 对应 client_secret(不要公开!)
+SYZOJ_WEB_CPOAUTH_CLIENT_SECRET=your-client-secret-here
+
+# CP OAuth 服务端 base URL(默认 https://cpoauth.com)
+SYZOJ_WEB_CPOAUTH_BASE_URL=https://cpoauth.com
+
+# OAuth 回调地址,必须跟 cpoauth.com 上注册的"应用回调 URL"完全一致
+# 格式: https://<你的 OJ 域名>/auth/cpoauth/callback
+SYZOJ_WEB_CPOAUTH_REDIRECT_URI=https://your-oj.example.com/auth/cpoauth/callback
+
+# OAuth scope。固定写法,不要改:
+SYZOJ_WEB_CPOAUTH_SCOPE=openid profile cp:linked

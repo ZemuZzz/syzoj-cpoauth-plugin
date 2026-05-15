@@ -1,0 +1,58 @@
+<% this.title = '选择登录方式' %>
+<% include header %>
+<div class="padding" style="max-width: 720px; margin: 30px auto;">
+  <div style="display: flex; gap: 16px; align-items: center; padding: 16px; background: #ede7f6; border-radius: 8px; margin-bottom: 24px;">
+    <% if (profile.avatar_url) { %>
+      <img src="<%= profile.avatar_url %>" alt="avatar" style="width: 48px; height: 48px; border-radius: 50%;">
+    <% } %>
+    <div>
+      <div><b>CP OAuth 身份</b>:<%= profile.display_name || profile.username || profile.sub %></div>
+      <% if (profile.username) { %><small style="color: #666;">用户名:<%= profile.username %></small><% } %>
+    </div>
+  </div>
+  <h2>关联到本站账号</h2>
+  <p style="color: #666;">检测到你的 CP OAuth 账号还未关联任何本站账号。请选择:</p>
+  <div class="ui two column grid" style="margin-top: 20px;">
+    <!-- 选项 1: 创建新账号 -->
+    <div class="column">
+      <div class="ui segment">
+        <h3>创建新账号</h3>
+        <p style="color: #888; font-size: 0.9em;">用 CP OAuth 资料创建一个新账号</p>
+        <form method="POST" action="/auth/cpoauth/create">
+          <label>用户名</label>
+          <input type="text" name="username" value="<%= profile.username || '' %>" placeholder="3-24 字符" required>
+          <label>邮箱</label>
+          <input type="email" name="email" required>
+          <label>密码 (用于站内登录)</label>
+          <input type="password" name="password" placeholder="≥ 6 字符" required>
+          <button type="submit" class="ui primary fluid button" style="margin-top: 16px;">创建并登录</button>
+        </form>
+      </div>
+    </div>
+    <!-- 选项 2: 绑定现有账号 -->
+    <div class="column">
+      <div class="ui segment">
+        <h3>绑定到现有账号</h3>
+        <p style="color: #888; font-size: 0.9em;">输入现有的用户名 + 密码</p>
+        <form method="POST" action="/auth/cpoauth/link">
+          <label>用户名</label>
+          <input type="text" name="username" required>
+          <label>密码</label>
+          <input type="password" name="password" required>
+          <button type="submit" class="ui green fluid button" style="margin-top: 16px;">登录并绑定</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <p style="margin-top: 30px; text-align: center;">
+    <a href="/">取消并返回首页</a>
+  </p>
+</div>
+<style>
+input[type=text], input[type=email], input[type=password] {
+  width: 100%; padding: 8px 12px; margin-top: 4px; margin-bottom: 8px;
+  border: 1px solid #ddd; border-radius: 6px; font-size: 14px;
+}
+label { display: block; margin-top: 8px; font-weight: 500; color: #555; font-size: 0.9em; }
+</style>
+<% include footer %>

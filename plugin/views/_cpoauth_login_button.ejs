@@ -1,0 +1,21 @@
+<%
+// syzoj-cpoauth-plugin: 可复用的"用 CP OAuth 登录/注册"按钮
+// 用法:在 login.ejs 或 sign_up.ejs 任意位置插入:
+//   <% include _cpoauth_login_button %>
+//
+// 可选: 在 include 之前设置 cpoauth_button_label 控制文案,例如:
+//   <% var cpoauth_button_label = '使用 CP OAuth 注册 / 登录'; %>
+//   <% include _cpoauth_login_button %>
+//
+// 默认按钮文案是"使用 CP OAuth 登录"
+var __cp_label = (typeof cpoauth_button_label !== 'undefined') ? cpoauth_button_label : '使用 CP OAuth 登录';
+%>
+<% if (syzoj.cpoauth_enabled) { %>
+  <div class="ui horizontal divider" style="color: #888; margin: 18px 0;">或</div>
+  <a href="/auth/cpoauth/login" class="ui fluid purple button" style="background: #5c2db8;">
+    <i class="trophy icon"></i> <%= __cp_label %>
+  </a>
+  <div style="text-align: center; color: #888; font-size: 0.85em; margin-top: 8px;">
+    用洛谷 / Codeforces / AtCoder 等竞赛身份登录
+  </div>
+<% } %>
