@@ -104,7 +104,7 @@ syzoj-cpoauth-plugin/
 │   ├── CONFIG.md                          ← 环境变量详解
 │   ├── ARCHITECTURE.md                    ← OAuth 流程图 + 数据模型
 │   ├── TROUBLESHOOTING.md                 ← 已知坑
-│   └── screenshots/                       ← 截图(用户自行补充)
+│   └── screenshots/                       ← 使用效果图
 ├── sql/
 │   └── 001_create_binding_table.sql       ← 建表 SQL
 ├── plugin/                                ← 直接挂载到容器
