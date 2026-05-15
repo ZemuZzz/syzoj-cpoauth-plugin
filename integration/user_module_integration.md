@@ -1,16 +1,16 @@
 # user.js 集成
 
-在用户主页路由 `GET /user/:id` 里注入 `cpoauth_binding` 数据到 `show_user` 上下文,这样 view 层(`_cpoauth_profile_card.ejs`)才能读到。
+在用户主页路由 `GET /user/:id` 里注入 `cpoauth_binding` 数据到 `show_user` 上下文，使得 view 层可被读取。
 
 ## 修改步骤
 
-打开 `modules/user.js`,找到 `app.get('/user/:id', ...)` 路由处理函数(原生 SYZOJ 大约在 76 行附近)。
+打开 `modules/user.js`，找到 `app.get('/user/:id', ...)` 路由处理函数。
 
 在 `res.render('user', { ... })` **之前**插入注入代码。
 
 ## 完整示例
 
-修改前(原生 SYZOJ `modules/user.js` `GET /user/:id` 完整片段):
+修改前（完整片段）：
 
 ```javascript
 // User page
@@ -62,7 +62,7 @@ app.get('/user/:id', async (req, res) => {
 });
 ```
 
-修改后(只在 `res.render('user', ...)` 之前加一段):
+修改后（完整片段）：
 
 ```javascript
 // User page
@@ -144,10 +144,9 @@ app.get('/user/:id', async (req, res) => {
 });
 ```
 
-## 重要说明
+## 注意
 
-- **必须 `delete b.refresh_token`**——refresh_token 是敏感凭证,**绝对不能**通过 view 层暴露给用户
-- `try/catch` 包裹——即使 `user_cpoauth_binding` 表不存在(插件未安装时),原有 `/user/:id` 路由也不会崩
-- `TypeORM` 是 SYZOJ 的全局对象,**直接使用 `TypeORM.getConnection()` 即可**,无需 require
-- 注入代码放在 `ratingHistories.reverse()` 之后、`res.render` 之前——所有现有数据准备完成后再补
-- 这段代码**幂等**:即使重复执行,DB 查询和 user 对象赋值不会产生副作用
+- 记得 `delete b.refresh_token`。refresh_token 是敏感凭证，最好不要通过 view 层暴露给用户；
+- 最好使用`try/catch` 包裹。这样即使 `user_cpoauth_binding` 表不存在(插件未安装时),原有 `/user/:id` 路由也不会崩；
+- `TypeORM` 是 SYZOJ 的全局对象，**直接使用 `TypeORM.getConnection()` 即可**，无需 require；
+- 注入代码放在 `ratingHistories.reverse()` 之后、`res.render` 之前，等待所有现有数据准备完成后再补。

@@ -2,7 +2,7 @@
 
 为你的 SYZOJ 添加 [CP OAuth](https://cpoauth.com) 第三方登录支持。
 
-> 灵感来自 [imsunxinhao/login-with-cp-oauth](https://github.com/imsunxinhao/login-with-cp-oauth)(为 Hydro 开发)。本插件是面向 **SYZOJ** 的实现。
+> 灵感来自 [CP-OAuth](https://github.com/Ark-Aak/cp-oauth)。本插件是面向 **SYZOJ** 的第三方 OAuth 实现。
 
 ## 特性
 
@@ -14,21 +14,19 @@
 - ✅ PKCE + state CSRF 防御
 - ✅ 零侵入插件式集成(零 patch、4 处 1 行 include)
 
-## 截图
-
-> 准备 3 张截图放进 `docs/screenshots/` 后,把下面的链接打开即可。
+## 使用效果图
 
 - ![登录页按钮](docs/screenshots/login-button.png)
-- ![cpoauth 授权页](docs/screenshots/consent-page.png)
-- ![个人主页 CP 卡片](docs/screenshots/profile-card.png)
+- ![CP-OAuth 授权页](docs/screenshots/consent-page.png)
+- ![个人主页卡片](docs/screenshots/profile-card.png)
 
 ## 快速开始
 
 ### 前提
 
 - SYZOJ 已通过 docker-compose 部署并能正常运行
-- 已在 [cpoauth.com](https://cpoauth.com) 注册应用,拿到 `client_id` 和 `client_secret`
-- 你的 OJ 有公网域名 + HTTPS
+- 已在 [cpoauth.com](https://cpoauth.com) 注册应用，拿到 `client_id` 和 `client_secret`
+- 你的 OJ 有公网域名，且访问协议为 HTTPS
 
 ### 安装
 
@@ -38,7 +36,7 @@ git clone https://github.com/<你>/syzoj-cpoauth-plugin
 bash syzoj-cpoauth-plugin/scripts/install.sh
 ```
 
-安装脚本会:
+安装脚本会：
 1. 在 SYZOJ 数据库建 `user_cpoauth_binding` 表
 2. 打印你需要加到 `docker-compose.yml` 的内容
 3. 提示你需要改 4 处 SYZOJ 源码(每处 1 行 include 或 1 段代码)
@@ -47,7 +45,7 @@ bash syzoj-cpoauth-plugin/scripts/install.sh
 
 ### 配置
 
-5 个环境变量(详见 [docs/CONFIG.md](docs/CONFIG.md)):
+5 个环境变量，详见 [docs/CONFIG.md](docs/CONFIG.md)。
 
 ```yaml
 SYZOJ_WEB_CPOAUTH_CLIENT_ID: "你的-client-id"
@@ -59,12 +57,12 @@ SYZOJ_WEB_CPOAUTH_SCOPE: "openid profile cp:linked"
 
 ### 集成现有页面
 
-按下面 4 个文档分别在你的 SYZOJ 上加一行 include:
+按下面 4 个文档分别在你的 SYZOJ 上加一行 `include`:
 
-- **登录页**: [integration/login_integration.md](integration/login_integration.md)
-- **注册页**: [integration/sign_up_integration.md](integration/sign_up_integration.md)
-- **个人主页(view)**: [integration/user_view_integration.md](integration/user_view_integration.md)
-- **个人主页(module)**: [integration/user_module_integration.md](integration/user_module_integration.md) ← **必须**
+- **登录页**：[integration/login_integration.md](integration/login_integration.md)
+- **注册页**：[integration/sign_up_integration.md](integration/sign_up_integration.md)
+- **个人主页（前端）**：[integration/user_view_integration.md](integration/user_view_integration.md)
+- **个人主页（路由）**：[integration/user_module_integration.md](integration/user_module_integration.md) ← **必须**
 
 ### 重启
 
@@ -72,17 +70,9 @@ SYZOJ_WEB_CPOAUTH_SCOPE: "openid profile cp:linked"
 docker compose up -d --force-recreate web
 ```
 
-> 必须 `--force-recreate`,光 `restart` 不会重新加载新的 volume 挂载。
+> 光 `restart` 不会重新加载新的 volume 挂载。
 
-## 已知坑(必读)
-
-- ⚠️ scope 必须是 `openid profile cp:linked`(带冒号),**不是** `cp_summary`
-- ⚠️ /userinfo 返回字段叫 `linked_accounts`(数组),**不叫** `cp_summary`
-- ⚠️ SYZOJ 密码加盐 `md5(password + 'syzoj2_xxx')`,**不是裸 md5**
-- ⚠️ authorize 端点用 `/oauth/authorize`(Nuxt 页面),token / userinfo / revoke 用 `/api/oauth/*`
-- ⚠️ EJS include **不带 .ejs 后缀**:`<% include _cpoauth_login_button %>`
-- ⚠️ docker bind-mount 改变后必须 `--force-recreate`,光 restart 不行
-- ⚠️ nginx CSP 的 `connect-src` 要加 `https://cpoauth.com`
+## 坑（建议必读）
 
 详见 [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)。
 
@@ -99,7 +89,7 @@ docker compose up -d --force-recreate web
                                   └─ 用密码绑定现有账号
 ```
 
-数据存在 `user_cpoauth_binding` 表(单表,无外键约束)。
+数据存在 `user_cpoauth_binding` 表（无外键约束）。
 
 详细架构图 + 数据模型见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
@@ -138,18 +128,18 @@ syzoj-cpoauth-plugin/
 
 ## 兼容性
 
-- SYZOJ master 分支(2023+)
-- Docker 部署(原生部署也可,挂载方式参考即可)
+- SYZOJ master 分支（2023+）
+- Docker 部署（原生部署也可，但本文挂载方式就仅供参考了）
 - MySQL 5.7+ / MariaDB 10.3+
 - Node.js 16+
-- 浏览器:任意现代浏览器(用了 fetch API)
+- 任意可以调用 fetch API 的现代浏览器
 
 ## 贡献
 
-欢迎 issue / PR。特别欢迎:
-- 更多 OAuth provider 适配(GitHub / Google 等)
+欢迎 issue / PR。特别欢迎：
+- 更多 OAuth provider
 - i18n
-- 截图补充
+- ...
 
 ## License
 
@@ -157,4 +147,4 @@ syzoj-cpoauth-plugin/
 
 ---
 
-**注**:本插件基于 [AlgoBeat OJ](https://algobeat.online) 的 v1.8.0 CP OAuth 集成提取脱敏而来。原始集成感谢 [@Zemu (UnratedCheater)](https://algobeat.online/user/1) 的工作。
+本插件基于 [AlgoBeat OJ](https://algobeat.online) 的 v1.8.0 CP OAuth 集成提取脱敏而来。原始集成感谢 [@Zemu (UnratedCheater)](https://github.com/ZemuZzz) 的工作。

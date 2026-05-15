@@ -10,15 +10,15 @@
 # 你在 cpoauth.com 注册的 client_id
 SYZOJ_WEB_CPOAUTH_CLIENT_ID=00000000-0000-0000-0000-000000000000
 
-# 对应 client_secret(不要公开!)
+# 对应 client_secret
 SYZOJ_WEB_CPOAUTH_CLIENT_SECRET=your-client-secret-here
 
-# CP OAuth 服务端 base URL(默认 https://cpoauth.com)
+# CP OAuth 服务端 base URL（一般上线的环境不用改这个，如果你自部署了 CP-OAuth，也可换成你自己的 OAuth Base URL）
 SYZOJ_WEB_CPOAUTH_BASE_URL=https://cpoauth.com
 
-# OAuth 回调地址,必须跟 cpoauth.com 上注册的"应用回调 URL"完全一致
-# 格式: https://<你的 OJ 域名>/auth/cpoauth/callback
+# OAuth 回调地址。必须跟 cpoauth.com 上注册的“应用回调 URL”完全一致
+# 格式：https://<你的 OJ 域名>/auth/cpoauth/callback
 SYZOJ_WEB_CPOAUTH_REDIRECT_URI=https://your-oj.example.com/auth/cpoauth/callback
 
-# OAuth scope。固定写法,不要改:
+# OAuth scope。固定写法，无需修改:
 SYZOJ_WEB_CPOAUTH_SCOPE=openid profile cp:linked

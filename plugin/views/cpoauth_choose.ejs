@@ -7,23 +7,23 @@
     <% } %>
     <div>
       <div><b>CP OAuth 身份</b>:<%= profile.display_name || profile.username || profile.sub %></div>
-      <% if (profile.username) { %><small style="color: #666;">用户名:<%= profile.username %></small><% } %>
+      <% if (profile.username) { %><small style="color: #666;">用户名：<%= profile.username %></small><% } %>
     </div>
   </div>
   <h2>关联到本站账号</h2>
-  <p style="color: #666;">检测到你的 CP OAuth 账号还未关联任何本站账号。请选择:</p>
+  <p style="color: #666;">检测到你的 CP OAuth 账号还未关联任何本站账号。请选择：</p>
   <div class="ui two column grid" style="margin-top: 20px;">
     <!-- 选项 1: 创建新账号 -->
     <div class="column">
       <div class="ui segment">
         <h3>创建新账号</h3>
-        <p style="color: #888; font-size: 0.9em;">用 CP OAuth 资料创建一个新账号</p>
+        <p style="color: #888; font-size: 0.9em;">使用 CP OAuth 资料创建一个新账号</p>
         <form method="POST" action="/auth/cpoauth/create">
           <label>用户名</label>
           <input type="text" name="username" value="<%= profile.username || '' %>" placeholder="3-24 字符" required>
           <label>邮箱</label>
           <input type="email" name="email" required>
-          <label>密码 (用于站内登录)</label>
+          <label>密码（用于站内登录）</label>
           <input type="password" name="password" placeholder="≥ 6 字符" required>
           <button type="submit" class="ui primary fluid button" style="margin-top: 16px;">创建并登录</button>
         </form>
@@ -33,7 +33,7 @@
     <div class="column">
       <div class="ui segment">
         <h3>绑定到现有账号</h3>
-        <p style="color: #888; font-size: 0.9em;">输入现有的用户名 + 密码</p>
+        <p style="color: #888; font-size: 0.9em;">输入现有的用户名和密码</p>
         <form method="POST" action="/auth/cpoauth/link">
           <label>用户名</label>
           <input type="text" name="username" required>

@@ -1,13 +1,16 @@
 # syzoj-cpoauth-plugin nginx CSP 配置片段
+# 如果你的 nginx 没用 CSP，本文件可以忽略
+# 如果你的 nginx 没用 CSP，本文件可以忽略
+# 如果你的 nginx 没用 CSP，本文件可以忽略
 # ============================================================
 # 如果你的 nginx 反向代理有 Content-Security-Policy header,
 # 需要在 connect-src 里加上 https://cpoauth.com,
 # 否则插件的同步/解绑 fetch 调用会被浏览器拦截。
 #
 # 把下面的 add_header 这一行加到你 nginx 的 server / location 块里。
+# 添加了对部分仓库、字体库的访问支持。
 # ============================================================
 
-# 完整的 CSP(包含 cpoauth + Google Analytics + 字体 CDN 等常见三方):
 add_header Content-Security-Policy "
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval';
@@ -22,11 +25,9 @@ add_header Content-Security-Policy "
 " always;
 
 # 注意 (生产环境):
-#  1. CSP header 实际部署时应该写成一行,以上多行是为了可读性
+#  1. CSP header 实际部署时应该写成一行，以上多行是为了可读性
 #  2. 多个 add_header 会互相覆盖。如果 nginx 里其他地方已经有 CSP,
-#     合并到一个 directive 里再 add_header,不要分两次写
+#     合并到一个 directive 里再 add_header，不要分两次写
 #  3. nginx 的 'if' 块内 add_header 会**覆盖**外层 location 的所有
-#     add_header,所以如果在 if 里加了 CSP,location 里的所有
+#     add_header,所以如果在 if 里加了 CSP，location 里的所有
 #     add_header 都要在 if 块内重复一遍
-
-# 如果你的 nginx 没用 CSP,本文件可以忽略
