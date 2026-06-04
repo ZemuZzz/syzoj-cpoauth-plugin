@@ -20,7 +20,7 @@
 
 ```bash
 cd /etc/docker/compose/YourOJ      # 你的 SYZOJ docker-compose 所在目录
-git clone https://github.com/<你的 GitHub>/syzoj-cpoauth-plugin
+git clone https://github.com/ZemuZzz/syzoj-cpoauth-plugin
 ```
 
 ## 第 3 步：运行安装脚本(建表 + 提示挂载)
